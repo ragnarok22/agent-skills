@@ -7,16 +7,13 @@ This repository is a source-of-truth for local Codex/Agent skills.
 - `skills/<skill-name>/SKILL.md`: required instructions for the skill.
 - `skills/<skill-name>/agents/openai.yaml`: required agent metadata/config.
 - `skills/<skill-name>/scripts/`, `references/`, `assets/`: optional supporting files.
-- `tools/`: Bash utilities for syncing/importing skills.
-- `Makefile`: task entry points (`list`, `import`, `sync`).
 
 Keep skill names lowercase and hyphenated (example: `pricing-copy-audit`).
 
 ## Build, Test, and Development Commands
-- `make list`: lists skill directories under `skills/`.
-- `make import`: imports skills from `~/.agents/skills` and `~/.codex/skills` into this repo.
-- `make sync`: copies repo skills to both local targets above.
-- `bash -n tools/*.sh`: quick syntax check for shell scripts.
+- `npx skills add`: add skills to this repository via the skills CLI.
+- `find skills -mindepth 1 -maxdepth 1 -type d -print | sort`: list skill directories under `skills/`.
+- `find skills -type f -name '*.md' -size 0`: detect empty markdown files.
 
 Run commands from the repository root.
 
@@ -29,9 +26,9 @@ Run commands from the repository root.
 ## Testing Guidelines
 There is no formal test suite yet. Before opening a PR:
 
-- Run `make list` to confirm expected skill discovery.
-- Run `make sync` and verify skills appear in both target directories.
-- For script changes, run `bash -n tools/*.sh` and exercise the updated path manually.
+- Run `find skills -mindepth 1 -maxdepth 1 -type d -print | sort` to confirm expected skill discovery.
+- Ensure each skill contains `SKILL.md`.
+- Run `find skills -type f -name '*.md' -size 0` and confirm it returns no files.
 
 ## Commit & Pull Request Guidelines
 Use Conventional Commit style, as in existing history (`feat: add skills repository scaffolding and sync tooling`).
