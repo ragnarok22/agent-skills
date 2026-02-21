@@ -1,62 +1,82 @@
-name: Bug report
-description: Report a reproducible problem in this repository.
-title: "[Bug]: "
+name: Skill/content issue
+description: Report incorrect behavior, unclear instructions, or metadata/doc issues.
+title: "[Issue]: "
 labels:
   - bug
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug.
+        Thanks for reporting an issue.
+        This repository contains AI skills and markdown/YAML content.
   - type: textarea
-    id: summary
+    id: problem
     attributes:
-      label: Summary
-      description: What is going wrong?
-      placeholder: A clear and concise description of the bug.
+      label: What is wrong?
+      description: Describe the issue in one or two sentences.
+      placeholder: The skill instructions are unclear/inaccurate for this use case.
+    validations:
+      required: true
+  - type: input
+    id: affected_path
+    attributes:
+      label: Affected path
+      description: Skill or file path where the issue exists.
+      placeholder: skills/<skill-name>/SKILL.md
+    validations:
+      required: true
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Issue type
+      options:
+        - Skill behavior/output quality
+        - Instructions are unclear or conflicting
+        - Metadata/config issue (agents/openai.yaml)
+        - Broken links or references
+        - Repository docs/workflow issue
     validations:
       required: true
   - type: textarea
-    id: steps
+    id: reproduction
     attributes:
-      label: Steps to reproduce
-      description: Provide a minimal sequence of steps.
+      label: Reproduction details
+      description: Include the prompt/input and steps used to reproduce.
       placeholder: |
-        1. Run ...
-        2. Open ...
-        3. Observe ...
-    validations:
-      required: true
+        Prompt/input:
+        Steps:
+        1. ...
+        2. ...
+      render: markdown
   - type: textarea
     id: expected
     attributes:
-      label: Expected behavior
-      description: What did you expect to happen?
+      label: Expected result
+      description: What should have happened?
     validations:
       required: true
   - type: textarea
     id: actual
     attributes:
-      label: Actual behavior
+      label: Actual result
       description: What happened instead?
     validations:
       required: true
   - type: textarea
-    id: environment
+    id: context
     attributes:
-      label: Environment
-      description: Provide relevant environment details.
+      label: Context (optional)
+      description: Relevant runtime/context details if applicable.
       placeholder: |
         - OS:
-        - Shell:
-        - Node version:
-        - Make version:
+        - Agent runtime:
+        - Additional context:
   - type: textarea
-    id: logs
+    id: proposed_fix
     attributes:
-      label: Relevant logs or output
-      description: Paste error output, stack traces, or lint output if available.
-      render: shell
+      label: Proposed fix (optional)
+      description: If you have an idea for a fix, describe it here.
+      render: markdown
   - type: checkboxes
     id: checks
     attributes:
@@ -64,6 +84,5 @@ body:
       options:
         - label: I have searched existing issues and did not find a duplicate.
           required: true
-        - label: I can reproduce this issue on the latest version of the repository.
+        - label: This is not a security vulnerability report (see SECURITY.md).
           required: true
-

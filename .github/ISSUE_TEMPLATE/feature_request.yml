@@ -1,6 +1,6 @@
-name: Feature request
-description: Suggest an improvement for this repository or its skill workflows.
-title: "[Feature]: "
+name: Skill/repo enhancement
+description: Propose a new skill or improvements to existing skill/workflow content.
+title: "[Request]: "
 labels:
   - enhancement
 body:
@@ -8,38 +8,54 @@ body:
     attributes:
       value: |
         Thanks for proposing an improvement.
-  - type: textarea
-    id: problem
+        Use this for skill additions, skill updates, and repository workflow/docs enhancements.
+  - type: dropdown
+    id: request_type
     attributes:
-      label: Problem statement
-      description: What problem are you trying to solve?
-      placeholder: A clear and concise description of the pain point.
+      label: Request type
+      options:
+        - New skill proposal
+        - Existing skill enhancement
+        - Repository docs/workflow enhancement
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case/problem
+      description: What user need or contributor pain point does this solve?
+      placeholder: Describe the scenario and why current skills/docs are not enough.
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
       label: Proposed solution
-      description: Describe the change you want to see.
-      placeholder: What should be added or changed?
+      description: What should be added or changed?
+      placeholder: Outline the skill content, metadata changes, or workflow changes.
     validations:
       required: true
   - type: textarea
-    id: alternatives
+    id: acceptance_criteria
     attributes:
-      label: Alternatives considered
-      description: What alternatives did you evaluate?
+      label: Acceptance criteria
+      description: How do we know this request is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+  - type: input
+    id: impacted_paths
+    attributes:
+      label: Expected impacted path(s)
+      description: Skill/file paths likely to be updated.
+      placeholder: skills/<skill-name>/..., README.md, CONTRIBUTING.md
   - type: textarea
-    id: impact
+    id: references
     attributes:
-      label: Expected impact
-      description: How would this improve contributor or user experience?
-  - type: textarea
-    id: scope
-    attributes:
-      label: Scope and files
-      description: Mention expected files/directories impacted.
-      placeholder: e.g., skills/<skill-name>/..., Makefile, docs, CI workflow
+      label: References (optional)
+      description: Related issues, examples, or external references.
   - type: checkboxes
     id: checks
     attributes:
@@ -49,4 +65,3 @@ body:
           required: true
         - label: This request is not related to a security vulnerability (see SECURITY.md).
           required: true
-
