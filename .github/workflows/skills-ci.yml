@@ -4,12 +4,14 @@ on:
   push:
     branches: [main]
     paths:
-      - 'skills/**/*.md'
+      - 'skills/**/*'
+      - 'Makefile'
       - '.github/workflows/skills-ci.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'skills/**/*.md'
+      - 'skills/**/*'
+      - 'Makefile'
       - '.github/workflows/skills-ci.yml'
 
 jobs:
@@ -18,37 +20,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate skill markdown structure
-        run: |
-          set -euo pipefail
-          found_markdown=0
-
-          for dir in skills/*; do
-            [[ -d "$dir" ]] || continue
-            name="$(basename "$dir")"
-            if [[ ! "$name" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
-              echo "invalid skill folder name: $name"
-              exit 1
-            fi
-            if [[ ! -f "$dir/SKILL.md" ]]; then
-              echo "missing required file: $dir/SKILL.md"
-              exit 1
-            fi
-            if [[ ! -s "$dir/SKILL.md" ]]; then
-              echo "empty required file: $dir/SKILL.md"
-              exit 1
-            fi
-          done
-
-          while IFS= read -r -d '' file; do
-            found_markdown=1
-            if [[ ! -s "$file" ]]; then
-              echo "empty markdown file: $file"
-              exit 1
-            fi
-          done < <(find skills -type f -name '*.md' -print0)
-
-          if [[ "$found_markdown" -eq 0 ]]; then
-            echo "no markdown files found in skills/"
-            exit 1
-          fi
+      - name: Run lint checks
+        run: make lint
