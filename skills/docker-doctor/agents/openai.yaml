@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docker Doctor"
+  short_description: "Audit Dockerfiles and Compose for security and optimization issues"
+  default_prompt: "Use $docker-doctor to verify Dockerfiles and Compose files for security issues, misconfiguration, and optimization opportunities."
