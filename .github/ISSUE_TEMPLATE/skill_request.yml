@@ -1,0 +1,67 @@
+name: Skill request
+description: Request a new skill or expand capabilities of an existing skill.
+title: "[Skill Request]: "
+labels:
+  - skill-request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for submitting a skill request.
+        Use this for new skills and capability expansions.
+  - type: dropdown
+    id: request_scope
+    attributes:
+      label: Request scope
+      options:
+        - New skill
+        - Expand an existing skill
+        - Skill ecosystem/workflow support
+    validations:
+      required: true
+  - type: input
+    id: related_skill
+    attributes:
+      label: Existing skill path (if applicable)
+      description: Fill only when expanding an existing skill.
+      placeholder: skills/<skill-name>/
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+      description: What user need does this request address?
+      placeholder: Describe the scenario and why the current skill set is insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: requested_behavior
+    attributes:
+      label: Requested behavior/capability
+      description: What should the skill do?
+      placeholder: Describe expected instructions, workflow, and desired outputs.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: How do we know this request is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References (optional)
+      description: Related issues, examples, or source material.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checks
+      options:
+        - label: I have searched existing issues and did not find a duplicate.
+          required: true
+        - label: This request is not related to a security vulnerability (see SECURITY.md).
+          required: true

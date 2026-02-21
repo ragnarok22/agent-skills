@@ -6,9 +6,9 @@ Describe what changed and why.
 
 List key files/directories changed (for example `skills/<skill-name>/...`, docs, workflow files).
 
-## Related Issue
+## Related Request
 
-Closes #
+Link the related misbehavior report or skill request (for example `Closes #123`).
 
 ## Verification
 

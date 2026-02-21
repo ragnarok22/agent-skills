@@ -1,36 +1,36 @@
-name: Skill/content issue
-description: Report incorrect behavior, unclear instructions, or metadata/doc issues.
-title: "[Issue]: "
+name: Skill misbehavior report
+description: Report unexpected or incorrect behavior from a skill or repository instructions.
+title: "[Misbehavior]: "
 labels:
-  - bug
+  - misbehavior
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting an issue.
+        Thanks for reporting a misbehavior.
         This repository contains AI skills and markdown/YAML content.
-  - type: textarea
-    id: problem
-    attributes:
-      label: What is wrong?
-      description: Describe the issue in one or two sentences.
-      placeholder: The skill instructions are unclear/inaccurate for this use case.
-    validations:
-      required: true
   - type: input
     id: affected_path
     attributes:
-      label: Affected path
-      description: Skill or file path where the issue exists.
+      label: Affected skill/file path
+      description: Path where this misbehavior is rooted.
       placeholder: skills/<skill-name>/SKILL.md
     validations:
       required: true
-  - type: dropdown
-    id: issue_type
+  - type: textarea
+    id: prompt_input
     attributes:
-      label: Issue type
+      label: Prompt/input used
+      description: Include the prompt or input that triggered this behavior.
+      render: markdown
+    validations:
+      required: true
+  - type: dropdown
+    id: misbehavior_type
+    attributes:
+      label: Misbehavior type
       options:
-        - Skill behavior/output quality
+        - Skill behavior/output is incorrect
         - Instructions are unclear or conflicting
         - Metadata/config issue (agents/openai.yaml)
         - Broken links or references
@@ -38,28 +38,30 @@ body:
     validations:
       required: true
   - type: textarea
-    id: reproduction
+    id: observed
     attributes:
-      label: Reproduction details
-      description: Include the prompt/input and steps used to reproduce.
-      placeholder: |
-        Prompt/input:
-        Steps:
-        1. ...
-        2. ...
+      label: Observed behavior
+      description: What happened?
       render: markdown
-  - type: textarea
-    id: expected
-    attributes:
-      label: Expected result
-      description: What should have happened?
     validations:
       required: true
   - type: textarea
-    id: actual
+    id: expected
     attributes:
-      label: Actual result
-      description: What happened instead?
+      label: Expected behavior
+      description: What should have happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Provide minimal steps to reproduce this misbehavior.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+      render: markdown
     validations:
       required: true
   - type: textarea
@@ -71,12 +73,6 @@ body:
         - OS:
         - Agent runtime:
         - Additional context:
-  - type: textarea
-    id: proposed_fix
-    attributes:
-      label: Proposed fix (optional)
-      description: If you have an idea for a fix, describe it here.
-      render: markdown
   - type: checkboxes
     id: checks
     attributes:
