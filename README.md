@@ -4,16 +4,34 @@
 ![Skills](https://img.shields.io/badge/skills-4-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 
-Single source of truth for custom Codex and Agent skills — reusable, versioned, and CI-validated.
+Source-of-truth repository for local Codex/Agent skills. Skills are reusable, versioned, and validated in CI.
 
 ## Available Skills
 
-| Skill                                                          | Description                                                                                                   |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [dependency-risk-audit](skills/dependency-risk-audit/)         | Review Python dependencies for security advisories, stale pins, and unsafe upgrade paths                      |
-| [django-doctor](skills/django-doctor/)                         | Audit Django codebases for security, performance, correctness, and architecture antipatterns                  |
-| [queryset-optimizer](skills/queryset-optimizer/)               | Optimize Django ORM performance by detecting N+1 query patterns, missing eager loading, and likely index gaps |
-| [write-conventional-commit](skills/write-conventional-commit/) | Draft and apply commit messages that comply with Conventional Commits 1.0.0                                   |
+| Skill | Description |
+| --- | --- |
+| [dependency-risk-audit](skills/dependency-risk-audit/) | Review Python dependencies for security advisories, stale pins, and unsafe upgrade paths |
+| [django-doctor](skills/django-doctor/) | Audit Django codebases for security, performance, correctness, and architecture antipatterns |
+| [queryset-optimizer](skills/queryset-optimizer/) | Optimize Django ORM performance by detecting N+1 query patterns, missing eager loading, and likely index gaps |
+| [write-conventional-commit](skills/write-conventional-commit/) | Draft and apply commit messages that comply with Conventional Commits 1.0.0 |
+
+## Repository Layout
+
+```text
+agent-skills/
+  AGENTS.md
+  README.md
+  skills/
+    <skill-name>/
+      SKILL.md              # required
+      agents/openai.yaml    # required
+      README.md             # recommended
+      scripts/              # optional
+      references/           # optional
+      assets/               # optional
+```
+
+Skill folder names must be lowercase and hyphen-separated (example: `pricing-copy-audit`).
 
 ## Quick Start
 
@@ -23,59 +41,44 @@ Single source of truth for custom Codex and Agent skills — reusable, versioned
 npx skills add ragnarok22/agent-skills --skill django-doctor
 ```
 
-### Django Doctor runtime behavior
-
-The `django-doctor` skill supports multiple project execution styles and safe defaults:
-
-- Uses a selected `<MANAGE_CMD>` command rather than assuming `uv` only.
-- Accepts a user-provided runner first (for example Poetry, uv, plain Python, Pipenv, Docker wrappers).
-- Auto-detects runners when possible (`poetry.lock`/`[tool.poetry]`, then `uv.lock`, then Python fallback).
-- Requires explicit trust/approval before running any runtime Django checks.
-- Falls back to static-only scanning when runtime execution is not approved.
-- Produces sanitized findings and redacts secrets in report output.
-
-### Create a new skill
+### Create a new skill scaffold
 
 ```bash
-mkdir -p skills/my-skill/agents
+make create <skill-name>
 ```
 
-Then add the required files:
+This creates:
 
-- `skills/my-skill/SKILL.md` — skill instructions (required)
-- `skills/my-skill/agents/openai.yaml` — agent metadata (required)
-- `skills/my-skill/scripts/` — automation scripts (optional)
-- `skills/my-skill/references/` — reference material (optional)
-- `skills/my-skill/assets/` — static assets (optional)
+- `skills/<skill-name>/SKILL.md`
+- `skills/<skill-name>/agents/openai.yaml`
+- `skills/<skill-name>/README.md`
+- Optional support directories: `scripts/`, `references/`, `assets/`
 
-## Project Structure
+### Validate local changes
 
-```text
-agent-skills/
-  skills/
-    <skill-name>/
-      SKILL.md              # required
-      agents/openai.yaml    # required
-      scripts/              # optional
-      references/           # optional
-      assets/               # optional
+```bash
+make lint
+find skills -mindepth 1 -maxdepth 1 -type d -print | sort
+find skills -type f -name '*.md' -size 0
 ```
 
-### Naming Conventions
+### Format docs and metadata
 
-- Lowercase, hyphen-separated: `pricing-copy-audit`
-- Short and action-oriented
+```bash
+make format
+```
 
-## Commands
+## Contribution Guidelines
 
-| Command                                                 | Purpose                        |
-| ------------------------------------------------------- | ------------------------------ |
-| `npx skills add`                                        | Add a skill to this repository |
-| `npx skills add ragnarok22/agent-skills --skill <name>` | Install a skill from this repo |
+1. Add or update skill content under `skills/<skill-name>/`.
+2. Ensure each skill includes required files:
+   - `SKILL.md`
+   - `agents/openai.yaml`
+3. Run local checks (`make lint`) before opening a PR.
+4. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`).
 
-## Contributing
+PR descriptions should include purpose/scope, verification commands run, and notable filesystem-impact notes (if any).
 
-1. Create your skill directory under `skills/`.
-2. Ensure `SKILL.md` exists and is non-empty.
-3. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`).
-4. CI validates skill structure automatically on push and PR.
+## CI
+
+The `Skills CI` workflow validates skill structure and repository consistency on pushes and pull requests.

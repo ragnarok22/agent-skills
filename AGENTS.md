@@ -7,12 +7,17 @@ This repository is a source-of-truth for local Codex/Agent skills.
 - `skills/<skill-name>/`: one directory per skill.
 - `skills/<skill-name>/SKILL.md`: required instructions for the skill.
 - `skills/<skill-name>/agents/openai.yaml`: required agent metadata/config.
+- `skills/<skill-name>/README.md`: recommended human-facing usage notes.
 - `skills/<skill-name>/scripts/`, `references/`, `assets/`: optional supporting files.
 
 Keep skill names lowercase and hyphenated (example: `pricing-copy-audit`).
 
 ## Build, Test, and Development Commands
 
+- `make help`: list available repository automation commands.
+- `make create <skill-name>`: scaffold a new skill directory with required files.
+- `make lint`: validate skill folder naming, required files, and empty Markdown checks.
+- `make format`: format Markdown and YAML files with Prettier.
 - `npx skills add`: add skills to this repository via the skills CLI.
 - `find skills -mindepth 1 -maxdepth 1 -type d -print | sort`: list skill directories under `skills/`.
 - `find skills -type f -name '*.md' -size 0`: detect empty markdown files.
@@ -30,8 +35,9 @@ Run commands from the repository root.
 
 There is no formal test suite yet. Before opening a PR:
 
+- Run `make lint` and confirm it passes.
 - Run `find skills -mindepth 1 -maxdepth 1 -type d -print | sort` to confirm expected skill discovery.
-- Ensure each skill contains `SKILL.md`.
+- Ensure each skill contains `SKILL.md` and `agents/openai.yaml`.
 - Run `find skills -type f -name '*.md' -size 0` and confirm it returns no files.
 
 ## Commit & Pull Request Guidelines
