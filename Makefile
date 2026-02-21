@@ -40,6 +40,7 @@ create: ## Create a new skill scaffold under skills/<skill-name>
 	fi; \
 	mkdir -p "$$skill_dir/agents" "$$skill_dir/scripts" "$$skill_dir/references" "$$skill_dir/assets"; \
 	printf "# %s\n\nDescribe what this skill does and when to use it.\n" "$(CREATE_SKILL_NAME)" > "$$skill_dir/SKILL.md"; \
+	printf "# %s\n\n## Purpose\n\nShort description of this skill.\n\n## Structure\n\n- `SKILL.md`\n- `agents/openai.yaml`\n- `scripts/` (optional)\n- `references/` (optional)\n- `assets/` (optional)\n" "$(CREATE_SKILL_NAME)" > "$$skill_dir/README.md"; \
 	printf "name: %s\ndescription: Describe this skill.\n" "$(CREATE_SKILL_NAME)" > "$$skill_dir/agents/openai.yaml"; \
 	echo "Created $$skill_dir"
 
