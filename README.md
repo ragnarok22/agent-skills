@@ -13,7 +13,6 @@ agent-skills/
       scripts/        # optional
       references/     # optional
       assets/         # optional
-  tools/
 ```
 
 ## Naming
@@ -35,10 +34,16 @@ agent-skills/
 
 ## Commands
 
-- `make list`: list all local skills in this repo
-- `make sync`: copy repo skills to:
-  - `~/.agents/skills`
-  - `~/.codex/skills`
+- `npx skills add`: add skills to this repository using the skills CLI
+- CI validation runs from `.github/workflows/skills-ci.yml` on skill markdown changes
+
+## Install from This Repo
+
+Install a specific skill from GitHub:
+
+```bash
+npx skills add ragnarok22/agent-skills --skill django-doctor
+```
 
 ## Notes
 
