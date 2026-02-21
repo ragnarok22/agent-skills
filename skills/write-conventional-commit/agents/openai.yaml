@@ -1,0 +1,3 @@
+interface:
+  display_name: "Write Conventional Commit"
+  short_description: "Draft and apply Conventional Commits 1.0.0 messages"
