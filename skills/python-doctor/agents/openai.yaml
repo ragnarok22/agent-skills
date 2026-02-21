@@ -1,2 +1,4 @@
-name: python-doctor
-description: Describe this skill.
+interface:
+  display_name: "Python Doctor"
+  short_description: "Run a scored Python health audit with actionable fixes"
+  default_prompt: "Use $python-doctor to inspect this Python project for security, performance, correctness, and architecture issues."
