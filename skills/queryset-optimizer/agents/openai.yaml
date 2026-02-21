@@ -1,0 +1,3 @@
+interface:
+  display_name: "QuerySet Optimizer"
+  short_description: "Find and fix Django ORM query inefficiencies"

@@ -1,7 +1,7 @@
 # agent-skills
 
 [![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
-![Skills](https://img.shields.io/badge/skills-1-blue)
+![Skills](https://img.shields.io/badge/skills-2-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 
 Single source of truth for custom Codex and Agent skills — reusable, versioned, and CI-validated.
@@ -10,6 +10,7 @@ Single source of truth for custom Codex and Agent skills — reusable, versioned
 
 | Skill | Description |
 |-------|-------------|
+| [dependency-risk-audit](skills/dependency-risk-audit/) | Review Python dependencies for security advisories, stale pins, and unsafe upgrade paths |
 | [django-doctor](skills/django-doctor/) | Audit Django codebases for security, performance, correctness, and architecture antipatterns |
 
 ## Quick Start
