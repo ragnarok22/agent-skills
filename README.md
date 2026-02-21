@@ -1,51 +1,67 @@
 # agent-skills
 
-Single source of truth for your custom Codex/Agent skills.
+[![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
+![Skills](https://img.shields.io/badge/skills-1-blue)
+![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 
-## Structure
+Single source of truth for custom Codex and Agent skills — reusable, versioned, and CI-validated.
 
-```text
-agent-skills/
-  skills/
-    <skill-name>/
-      SKILL.md
-      agents/openai.yaml
-      scripts/        # optional
-      references/     # optional
-      assets/         # optional
-```
+## Available Skills
 
-## Naming
+| Skill | Description |
+|-------|-------------|
+| [django-doctor](skills/django-doctor/) | Audit Django codebases for security, performance, correctness, and architecture antipatterns |
 
-- Use lowercase and hyphens only (example: `pricing-copy-audit`).
-- Keep names short and action-oriented.
+## Quick Start
 
-## Create Your First Skill
-
-1. Create a folder:
-   `mkdir -p skills/my-skill/agents`
-2. Add required files:
-   - `skills/my-skill/SKILL.md`
-   - `skills/my-skill/agents/openai.yaml`
-3. Add optional resources as needed:
-   - `skills/my-skill/scripts/`
-   - `skills/my-skill/references/`
-   - `skills/my-skill/assets/`
-
-## Commands
-
-- `npx skills add`: add skills to this repository using the skills CLI
-- CI validation runs from `.github/workflows/skills-ci.yml` on skill markdown changes
-
-## Install from This Repo
-
-Install a specific skill from GitHub:
+### Install a skill from this repo
 
 ```bash
 npx skills add ragnarok22/agent-skills --skill django-doctor
 ```
 
-## Notes
+### Create a new skill
 
-- This repo is intended for your own skills only.
-- Avoid importing default/shared skills unless you explicitly want them here.
+```bash
+mkdir -p skills/my-skill/agents
+```
+
+Then add the required files:
+
+- `skills/my-skill/SKILL.md` — skill instructions (required)
+- `skills/my-skill/agents/openai.yaml` — agent metadata (required)
+- `skills/my-skill/scripts/` — automation scripts (optional)
+- `skills/my-skill/references/` — reference material (optional)
+- `skills/my-skill/assets/` — static assets (optional)
+
+## Project Structure
+
+```text
+agent-skills/
+  skills/
+    <skill-name>/
+      SKILL.md              # required
+      agents/openai.yaml    # required
+      scripts/              # optional
+      references/           # optional
+      assets/               # optional
+```
+
+### Naming Conventions
+
+- Lowercase, hyphen-separated: `pricing-copy-audit`
+- Short and action-oriented
+
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `npx skills add` | Add a skill to this repository |
+| `npx skills add ragnarok22/agent-skills --skill <name>` | Install a skill from this repo |
+
+## Contributing
+
+1. Create your skill directory under `skills/`.
+2. Ensure `SKILL.md` exists and is non-empty.
+3. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`).
+4. CI validates skill structure automatically on push and PR.
