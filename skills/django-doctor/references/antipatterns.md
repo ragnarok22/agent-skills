@@ -2,6 +2,7 @@
 
 ## Table of Contents
 
+- [Audit Conventions](#audit-conventions)
 - [Security](#security)
 - [Performance](#performance)
 - [Correctness](#correctness)
@@ -9,116 +10,127 @@
 
 ---
 
+## Audit Conventions
+
+- Run searches from the Django backend root (where `manage.py` lives).
+- Prefer `rg` for static checks. If unavailable, use `grep` equivalents.
+- Exclude noise by default: `.git`, virtualenv directories, build outputs, and generated files.
+- Ignore `tests/` and `migrations/` unless a rule explicitly targets them.
+- Every match starts as a **candidate**. Deduct score only after manual confirmation.
+- Severity points: Critical `10`, High `7`, Medium `5`, Low `3`.
+
+---
+
 ## Security
 
 ### SEC-01: Hardcoded SECRET_KEY
 
-**Severity**: Critical (10 pts)
-**Pattern**: `SECRET_KEY = "..."` in base settings (not loaded from env)
-**Search**: `grep -n "SECRET_KEY\s*=" config/settings/base.py config/settings/production.py`
-**Fix**: Use `os.environ` or `get_env_variable()` in production settings. A hardcoded fallback in `development.py` only is acceptable.
+**Severity**: Critical (10 pts)  
+**Search**: `rg -n --glob '*.py' 'SECRET_KEY\s*=' config settings .`  
+**Confirm**: Literal secret in shared/base/production settings, not an env lookup.  
+**Fix**: Load from environment in deployable settings.
 
-### SEC-02: DEBUG=True in production settings
+### SEC-02: DEBUG=True in deployable settings
 
-**Severity**: Critical (10 pts)
-**Pattern**: `DEBUG = True` in `config/settings/production.py`
-**Search**: `grep -n "DEBUG\s*=\s*True" config/settings/production.py`
-**Fix**: Set `DEBUG = False` in production settings.
+**Severity**: Critical (10 pts)  
+**Search**: `rg -n --glob '*.py' 'DEBUG\s*=\s*True' config settings .`  
+**Confirm**: Value is active in production/deploy profile, not local-only settings.  
+**Fix**: Set `DEBUG = False` for deployed environments.
 
 ### SEC-03: Raw SQL without parameterization
 
-**Severity**: Critical (10 pts)
-**Pattern**: `.raw(f"...")`, `.raw("..." % ...)`, `.raw("...".format(...))`, `cursor.execute(f"...")`
-**Search**: `grep -rn "\.raw\(f\"\|\.raw(\".*%\|\.raw(\".*\.format\|cursor\.execute(f\"" apps/`
-**Fix**: Use parameterized queries: `.raw("SELECT ... WHERE id = %s", [user_id])`.
+**Severity**: Critical (10 pts)  
+**Search**: `rg -n --glob '*.py' '\.raw\(f"|\.raw\(".*%|\.raw\(".*\.format|cursor\.execute\(f"' apps .`  
+**Confirm**: User-controlled values are interpolated into SQL.  
+**Fix**: Use parameterized SQL arguments.
 
-### SEC-04: Missing CSRF protection on state-changing views
+### SEC-04: Missing CSRF protection on state-changing endpoints
 
-**Severity**: High (7 pts)
-**Pattern**: `@csrf_exempt` on views that are NOT public auth endpoints (login/register)
-**Search**: `grep -rn "csrf_exempt" apps/`
-**Fix**: Remove `@csrf_exempt` from non-auth views. Only login/register endpoints should be exempt for frontend integration.
+**Severity**: High (7 pts)  
+**Search**: `rg -n --glob '*.py' '@csrf_exempt' apps .`  
+**Confirm**: Endpoint mutates state and is not an intentional public auth endpoint.  
+**Fix**: Remove `@csrf_exempt` or add proper CSRF/session strategy.
 
-### SEC-05: Exposed stack traces or verbose error responses
+### SEC-05: Exposed traces or raw exception messages
 
-**Severity**: Medium (5 pts)
-**Pattern**: `traceback.print_exc()`, `import traceback` in views, returning `str(e)` in API responses
-**Search**: `grep -rn "traceback\|str(e)\|repr(e)" apps/*/views.py`
-**Fix**: Log errors server-side, return generic error messages to clients.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'traceback\.print_exc|str\(e\)|repr\(e\)' apps .`  
+**Confirm**: Response payload leaks internals to clients.  
+**Fix**: Log server-side details and return generic client errors.
 
 ### SEC-06: Wildcard CORS or ALLOWED_HOSTS
 
-**Severity**: High (7 pts)
-**Pattern**: `CORS_ALLOW_ALL_ORIGINS = True` or `ALLOWED_HOSTS = ["*"]` in production settings
-**Search**: `grep -n "ALLOW_ALL_ORIGINS\|ALLOWED_HOSTS.*\*" config/settings/production.py`
-**Fix**: Explicitly list allowed origins and hosts.
+**Severity**: High (7 pts)  
+**Search**: `rg -n --glob '*.py' 'CORS_ALLOW_ALL_ORIGINS\s*=\s*True|ALLOWED_HOSTS\s*=\s*\[[^]]*\*' config settings .`  
+**Confirm**: Wildcards are enabled in deployable settings.  
+**Fix**: Restrict to explicit origins/hosts.
 
-### SEC-07: Missing authentication on views
+### SEC-07: Missing authentication on protected endpoints
 
-**Severity**: High (7 pts)
-**Pattern**: APIView/ViewSet without `permission_classes = [IsAuthenticated]` (excluding public endpoints)
-**Search**: Scan all views for missing `permission_classes` or `AllowAny` on non-auth endpoints.
-**Fix**: Add `permission_classes = [IsAuthenticated]` to all non-public views.
+**Severity**: High (7 pts)  
+**Search**: `rg -n --glob '*.py' 'class .*?(APIView|ViewSet)' apps .`  
+**Confirm**: Endpoint is not public but lacks auth requirements (`IsAuthenticated` or equivalent).  
+**Fix**: Add explicit permission/authentication classes.
 
-### SEC-08: Password or secret in source code
+### SEC-08: Secrets committed in source
 
-**Severity**: Critical (10 pts)
-**Pattern**: `password = "..."`, `api_key = "..."`, `token = "..."` hardcoded (not in tests)
-**Search**: `grep -rn "password\s*=\s*\"\|api_key\s*=\s*\"\|token\s*=\s*\"\|secret\s*=\s*\"" apps/ config/ --include="*.py" | grep -v test`
-**Fix**: Move secrets to environment variables.
+**Severity**: Critical (10 pts)  
+**Search**: `rg -n --glob '*.py' "(password|api_key|token|secret)\s*=\s*['\"][^'\"]+['\"]" apps config settings .`  
+**Confirm**: Hardcoded credential in non-test code.  
+**Fix**: Move to env vars or a secrets manager.
 
 ---
 
 ## Performance
 
-### PERF-01: Missing select_related / prefetch_related
+### PERF-01: Missing select_related/prefetch_related
 
-**Severity**: High (7 pts)
-**Pattern**: QuerySet accessing FK/M2M fields in serializers or loops without `.select_related()` / `.prefetch_related()`
-**Search**: Look for `ForeignKey` / `ManyToManyField` references in serializers whose views don't use `select_related`/`prefetch_related`.
-**Fix**: Add `.select_related("fk_field")` or `.prefetch_related("m2m_field")` to the queryset.
+**Severity**: High (7 pts)  
+**Search**: `rg -n --glob '*.py' 'select_related|prefetch_related|ForeignKey|ManyToManyField' apps .`  
+**Confirm**: Related objects accessed in serializers/views/loops without eager loading.  
+**Fix**: Add `select_related`/`prefetch_related` to querysets.
 
-### PERF-02: Unbounded queryset (missing pagination or limit)
+### PERF-02: Unbounded list endpoints
 
-**Severity**: High (7 pts)
-**Pattern**: `.all()` or `.filter(...)` returned directly in list views without pagination
-**Search**: Views returning `Model.objects.filter(...)` or `.all()` without pagination_class or slicing.
-**Fix**: Add `pagination_class` to ViewSets or manually paginate in APIViews.
+**Severity**: High (7 pts)  
+**Search**: `rg -n --glob '*.py' 'queryset\s*=|\.all\(\)|\.filter\(' apps .`  
+**Confirm**: Collection endpoint returns unpaginated or unsliced results.  
+**Fix**: Add DRF pagination or explicit limits.
 
-### PERF-03: Queries inside loops (N+1)
+### PERF-03: N+1 queries in loops
 
-**Severity**: High (7 pts)
-**Pattern**: ORM calls inside `for` loops: `for obj in qs: obj.related.field`
-**Search**: Look for queryset iteration followed by FK/related access without prefetch.
-**Fix**: Use `select_related` / `prefetch_related` before iteration, or restructure query.
+**Severity**: High (7 pts)  
+**Search**: `rg -n --glob '*.py' 'for .* in .*:' apps .`  
+**Confirm**: ORM relationship lookups happen inside iteration without prefetch.  
+**Fix**: Restructure query or eager-load relations.
 
-### PERF-04: Missing database indexes
+### PERF-04: Missing indexes for hot filters
 
-**Severity**: Medium (5 pts)
-**Pattern**: Frequently filtered fields (e.g., `user`, `is_archived`, `created_at`) without `db_index=True` or `Meta.indexes`
-**Search**: Cross-reference filter fields in views/managers with model field definitions.
-**Fix**: Add `db_index=True` to the field or add to `Meta.indexes`.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' '\.filter\(|db_index=True|indexes\s*=' apps .`  
+**Confirm**: Frequently filtered/sorted fields lack DB index coverage.  
+**Fix**: Add `db_index=True` or `Meta.indexes`.
 
-### PERF-05: Unnecessary model field loading
+### PERF-05: Loading unnecessary model fields
 
-**Severity**: Low (3 pts)
-**Pattern**: Loading all fields when only a few are needed, especially in list views
-**Search**: Views that select all fields but only serialize a subset.
-**Fix**: Use `.only()` or `.values()` for large models when only a few fields are needed.
+**Severity**: Low (3 pts)  
+**Search**: `rg -n --glob '*.py' '\.only\(|\.values\(' apps .`  
+**Confirm**: Large models fully loaded while response uses a narrow field subset.  
+**Fix**: Use `.only()`/`.values()` when appropriate.
 
-### PERF-06: Expensive operations in request cycle
+### PERF-06: Heavy synchronous work in request cycle
 
-**Severity**: Medium (5 pts)
-**Pattern**: Sending emails, calling external APIs, heavy computation inside view methods synchronously
-**Search**: `grep -rn "send_mail\|requests\.get\|requests\.post\|urlopen" apps/*/views.py`
-**Fix**: Offload to background tasks (Celery, Django-Q, etc.) or use async views.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'send_mail|requests\.(get|post|put|delete)|urlopen' apps .`  
+**Confirm**: Costly I/O or compute executes inline on request path.  
+**Fix**: Offload to background jobs or async workflow.
 
-### PERF-07: Cache not used for rarely-changing data
+### PERF-07: Missing caching for low-churn reference data
 
-**Severity**: Low (3 pts)
-**Pattern**: Repeated DB queries for data that changes infrequently (currencies, settings, categories)
-**Search**: Look for queries on lookup/reference tables without caching.
-**Fix**: Use Django's cache framework (`cache.get`/`cache.set`) or model-level caching (like the CurrencyQuerySet pattern).
+**Severity**: Low (3 pts)  
+**Search**: `rg -n --glob '*.py' 'cache\.get|cache\.set|objects\.(all|filter|get)\(' apps .`  
+**Confirm**: Repeated reads of low-change reference tables with no cache layer.  
+**Fix**: Add cache lookup/refresh policy.
 
 ---
 
@@ -126,116 +138,116 @@
 
 ### COR-01: Missing migrations
 
-**Severity**: Critical (10 pts)
-**Pattern**: Model changes without corresponding migration files
-**Check**: Run `uv run manage.py makemigrations --check --dry-run`
-**Fix**: Run `uv run manage.py makemigrations`.
+**Severity**: Critical (10 pts)  
+**Check**: `uv run manage.py makemigrations --check --dry-run || python manage.py makemigrations --check --dry-run`  
+**Confirm**: Command reports model drift.  
+**Fix**: Generate and review migrations.
 
-### COR-02: Missing model constraints
+### COR-02: Missing model constraints for business rules
 
-**Severity**: Medium (5 pts)
-**Pattern**: Business rules enforced only in serializers/views but not at DB level
-**Search**: Look for validation logic in serializers that should also be `CheckConstraint` or `UniqueConstraint` on the model.
-**Fix**: Add `Meta.constraints` to models to enforce rules at DB level.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'def validate|UniqueConstraint|CheckConstraint|constraints\s*=' apps .`  
+**Confirm**: Rule enforced only in serializer/view logic, not DB constraints.  
+**Fix**: Add appropriate model constraints.
 
-### COR-03: Unprotected foreign key deletion
+### COR-03: Risky cascade deletes
 
-**Severity**: Medium (5 pts)
-**Pattern**: `on_delete=models.CASCADE` where `PROTECT` or `SET_NULL` would be more appropriate (e.g., deleting a currency shouldn't delete all accounts)
-**Search**: `grep -rn "on_delete=models.CASCADE" apps/`
-**Fix**: Use `PROTECT` for reference data, `SET_NULL` for optional relationships, `CASCADE` only for true parent-child ownership.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'on_delete\s*=\s*models\.CASCADE' apps .`  
+**Confirm**: CASCADE used where reference integrity should be preserved.  
+**Fix**: Prefer `PROTECT` or `SET_NULL` when ownership is not strict parent-child.
 
 ### COR-04: Timezone-naive datetime usage
 
-**Severity**: Medium (5 pts)
-**Pattern**: `datetime.now()` instead of `timezone.now()`, `datetime.utcnow()`
-**Search**: `grep -rn "datetime\.now()\|datetime\.utcnow()" apps/`
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'datetime\.now\(\)|datetime\.utcnow\(\)' apps .`  
+**Confirm**: Naive time used in persisted/business-critical logic.  
 **Fix**: Use `django.utils.timezone.now()`.
 
 ### COR-05: Mutable default arguments
 
-**Severity**: Medium (5 pts)
-**Pattern**: `def func(items=[])` or `def func(data={})`
-**Search**: `grep -rn "def.*=\[\]\|def.*={}" apps/`
-**Fix**: Use `None` as default and initialize inside the function.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'def .*\=\[\]|def .*\=\{\}' apps .`  
+**Confirm**: Mutable default values in function signatures.  
+**Fix**: Use `None` default, initialize inside function.
 
 ### COR-06: Silenced exceptions
 
-**Severity**: Medium (5 pts)
-**Pattern**: Bare `except:` or `except Exception: pass`
-**Search**: `grep -rn "except:\|except Exception:\s*$" apps/` then check for `pass` on next line.
-**Fix**: Handle specific exceptions, log errors, or re-raise.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'except:\s*$|except Exception:\s*$' apps .`  
+**Confirm**: Exception is swallowed (`pass`) or obscured without logging/handling.  
+**Fix**: Catch specific exceptions and handle/log explicitly.
 
-### COR-07: Incorrect queryset evaluation
+### COR-07: Inefficient or incorrect queryset evaluation
 
-**Severity**: Low (3 pts)
-**Pattern**: Using `len(queryset)` instead of `.count()`, `list(qs)` when only checking existence, `if queryset:` instead of `.exists()`
-**Search**: `grep -rn "len(.*objects\|len(.*filter\|if.*\.all()" apps/`
-**Fix**: Use `.count()` for counting, `.exists()` for existence checks.
+**Severity**: Low (3 pts)  
+**Search**: `rg -n --glob '*.py' 'len\([^)]*queryset|if\s+[^:]*\.all\(\)|list\([^)]*queryset' apps .`  
+**Confirm**: Uses eager/materializing patterns where `.count()`/`.exists()` is intended.  
+**Fix**: Replace with queryset-native operations.
 
-### COR-08: manage.py check failures
+### COR-08: Django system check failures
 
-**Severity**: Varies
-**Pattern**: System check framework warnings/errors
-**Check**: Run `uv run manage.py check --deploy`
-**Fix**: Address each warning per Django docs.
+**Severity**: Varies  
+**Check**: `uv run manage.py check --deploy || python manage.py check --deploy`  
+**Confirm**: Any warning/error relevant to target deployment mode.  
+**Fix**: Resolve each warning or explicitly justify accepted risk.
 
 ---
 
 ## Architecture
 
-### ARCH-01: Fat views (business logic in views)
+### ARCH-01: Fat views with business logic
 
-**Severity**: Medium (5 pts)
-**Pattern**: Views containing complex business logic (>30 lines of non-DRF/non-serializer code), direct ORM aggregations, multi-step calculations
-**Search**: Look for views with heavy computation, complex conditionals, or multi-model orchestration.
-**Fix**: Extract business logic to a `services.py` module in the app.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'class .*?(APIView|ViewSet)|def (create|update|post|put|patch|get)\(' apps .`  
+**Confirm**: Complex domain logic embedded in views.  
+**Fix**: Extract business rules into `services.py` or domain layer.
 
 ### ARCH-02: Business logic in serializers
 
-**Severity**: Medium (5 pts)
-**Pattern**: Serializer `validate()` or `create()` methods containing business logic beyond validation/serialization
-**Search**: Check serializer `create`, `update`, and `validate` methods for logic that doesn't relate to data transformation.
-**Fix**: Move business logic to services; serializers should only validate input and serialize output.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*.py' 'class .*Serializer|def (validate|create|update)\(' apps .`  
+**Confirm**: Non-serialization domain logic inside serializer methods.  
+**Fix**: Move logic to services/use-case layer.
 
-### ARCH-03: Cross-app model imports
+### ARCH-03: Cross-app model imports in `models.py`
 
-**Severity**: Medium (5 pts)
-**Pattern**: Importing models from other apps directly in models.py (creates circular dependencies)
-**Search**: `grep -rn "from apps\.\w\+\.models import" apps/*/models.py` — flag when app A imports from app B's models.
-**Fix**: Use string references for ForeignKey (`"app_label.ModelName"`), or introduce a shared service layer.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*/models.py' 'from apps\.[^.]+\.models import' apps .`  
+**Confirm**: Cross-app imports create coupling/cycle risk.  
+**Fix**: Use string model references or service boundaries.
 
-### ARCH-04: Missing @extend_schema on API views
+### ARCH-04: Missing `@extend_schema` annotations
 
-**Severity**: Low (3 pts)
-**Pattern**: APIView/ViewSet methods without `@extend_schema()` decorator
-**Search**: Scan all view methods for missing schema annotations.
-**Fix**: Add `@extend_schema()` with operation_id, summary, description, and response types.
+**Severity**: Low (3 pts)  
+**Search**: `rg -n --glob '*.py' '@extend_schema|class .*?(APIView|ViewSet)' apps .`  
+**Confirm**: Public API handlers lack schema metadata where project expects drf-spectacular docs.  
+**Fix**: Add `@extend_schema` to documented endpoints.
 
-### ARCH-05: Missing base model inheritance
+### ARCH-05: Missing shared base model inheritance
 
-**Severity**: Medium (5 pts)
-**Pattern**: Models not inheriting from `UUIDModel` and/or `TimeStampedModel`
-**Search**: Check all model classes in apps/ for missing base model inheritance.
-**Fix**: Inherit from `UUIDModel, TimeStampedModel` for all domain models.
+**Severity**: Medium (5 pts)  
+**Search**: `rg -n --glob '*/models.py' 'class .*\(.*models\.Model.*\)|UUIDModel|TimeStampedModel' apps .`  
+**Confirm**: Project standard requires shared base models and a domain model skips them.  
+**Fix**: Adopt required base model mixins where applicable.
 
-### ARCH-06: Missing user filtering (multi-tenancy leak)
+### ARCH-06: Missing user scoping (multi-tenant leak risk)
 
-**Severity**: Critical (10 pts)
-**Pattern**: Querysets in views that don't filter by `request.user` on user-scoped models
-**Search**: Check all views for `.objects.all()` or `.objects.filter(...)` on user-scoped models without `user=request.user`.
-**Fix**: Always filter by `user=request.user` on user-owned models.
+**Severity**: Critical (10 pts)  
+**Search**: `rg -n --glob '*.py' '\.objects\.(all|filter|get)\(' apps .`  
+**Confirm**: User-owned data queried without `request.user` scoping (or equivalent tenant guard).  
+**Fix**: Enforce tenant/user filtering in all user-scoped access paths.
 
-### ARCH-07: Missing admin registration
+### ARCH-07: Models missing admin registration
 
-**Severity**: Low (3 pts)
-**Pattern**: Models defined but not registered in `admin.py`
-**Search**: Cross-reference model definitions with `@admin.register()` calls.
-**Fix**: Register models in admin with appropriate list_display, list_filter, and search_fields.
+**Severity**: Low (3 pts)  
+**Search**: `rg -n --glob '*/models.py' '^class .*models\.Model' apps . && rg -n --glob '*/admin.py' '@admin\.register|admin\.site\.register' apps .`  
+**Confirm**: Internal/admin-facing models expected in admin are not registered.  
+**Fix**: Register models with sensible admin configuration.
 
-### ARCH-08: Inconsistent error response format
+### ARCH-08: Inconsistent API error envelope
 
-**Severity**: Low (3 pts)
-**Pattern**: Views returning different error response shapes (some use `{"error": ...}`, others use `{"detail": ...}`)
-**Search**: `grep -rn "Response({" apps/*/views.py` and check error key names.
-**Fix**: Standardize on DRF's `{"detail": "..."}` format, or use a custom exception handler.
+**Severity**: Low (3 pts)  
+**Search**: `rg -n --glob '*.py' 'Response\(\{[^}]*("error"|"detail")' apps .`  
+**Confirm**: API mixes inconsistent error response contracts without explicit versioning.  
+**Fix**: Standardize error shape and exception handling strategy.

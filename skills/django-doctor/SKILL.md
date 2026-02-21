@@ -30,7 +30,7 @@ uv run manage.py makemigrations --check --dry-run 2>&1 || python manage.py makem
 
 Capture full output and summarize pass/fail status in the report.
 
-### Step 2: Static scan
+### Step 3: Static scan
 
 Read [references/antipatterns.md](references/antipatterns.md) for rule IDs, severity, search patterns, and fixes.
 
@@ -49,7 +49,7 @@ For every rule:
 
 If a rule cannot be evaluated, add it to a `Not evaluated` list with reason.
 
-### Step 3: Score findings
+### Step 4: Score findings
 
 Start from 100 and deduct points per finding:
 
@@ -65,7 +65,7 @@ Rules:
 - Cap duplicate deductions per rule ID: `severity_points * min(count, 3)`.
 - Deduct only for confirmed findings (not for unverified candidates).
 
-### Step 4: Report
+### Step 5: Report
 
 Output a markdown report with this structure:
 
@@ -113,10 +113,10 @@ Audit root: `<path>`
 
 If a severity level has no findings, omit that section. Always include top 3 recommendations sorted by score impact.
 
-### Step 5: Optional fix loop
+### Step 6: Optional fix loop
 
 If the user asks to remediate issues:
 
 1. Fix the highest-impact confirmed findings first.
-2. Re-run workflow steps 2-4.
+2. Re-run workflow steps 2-5.
 3. Report score delta and remaining risks.
