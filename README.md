@@ -3,93 +3,180 @@
 [![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
 ![Skills](https://img.shields.io/badge/skills-6-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-Source-of-truth repository for local Codex/Agent skills. Skills are reusable, versioned, and validated in CI.
+A curated collection of reusable skills for [Codex](https://openai.com/codex) and [Claude Code](https://docs.anthropic.com/en/docs/claude-code) agents. Each skill teaches your agent a specialized workflow -- auditing code, optimizing queries, writing commits, and more.
 
-## Available Skills
+---
 
-| Skill                                                          | Description                                                                                                   |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [dependency-risk-audit](skills/dependency-risk-audit/)         | Review Python dependencies for security advisories, stale pins, and unsafe upgrade paths                      |
-| [django-doctor](skills/django-doctor/)                         | Audit Django codebases for security, performance, correctness, and architecture antipatterns                  |
-| [docker-doctor](skills/docker-doctor/)                         | Verify Dockerfiles and Compose manifests for security, reliability, optimization, and configuration issues    |
-| [python-doctor](skills/python-doctor/)                         | Audit Python codebases for security, performance, correctness, and architecture antipatterns                  |
-| [queryset-optimizer](skills/queryset-optimizer/)               | Optimize Django ORM performance by detecting N+1 query patterns, missing eager loading, and likely index gaps |
-| [write-conventional-commit](skills/write-conventional-commit/) | Draft and apply commit messages that comply with Conventional Commits 1.0.0                                   |
+## Install a Skill
 
-## Repository Layout
+Pick any skill from the catalog below and install it with one command:
 
-```text
-agent-skills/
-  AGENTS.md
-  README.md
-  skills/
-    <skill-name>/
-      SKILL.md              # required
-      agents/openai.yaml    # required
-      README.md             # recommended
-      scripts/              # optional
-      references/           # optional
-      assets/               # optional
+```bash
+npx skills add ragnarok22/agent-skills --skill <skill-name>
 ```
 
-Skill folder names must be lowercase and hyphen-separated (example: `pricing-copy-audit`).
-
-## Quick Start
-
-### Install a skill from this repo
+For example:
 
 ```bash
 npx skills add ragnarok22/agent-skills --skill django-doctor
 ```
 
-### Create a new skill scaffold
+That's it. The skill is now available in your agent.
+
+---
+
+## Skills Catalog
+
+### Code Quality & Security
+
+| Skill                                                  | What it does                                                                                                                                                    |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [python-doctor](skills/python-doctor/)                 | Audits Python projects for security holes, performance issues, and antipatterns. Runs syntax checks, ruff, mypy, and pytest, then outputs a 0-100 health score. |
+| [django-doctor](skills/django-doctor/)                 | Audits Django projects end-to-end: `manage.py check --deploy`, migration issues, and static rule scans against a catalog of known antipatterns.                 |
+| [dependency-risk-audit](skills/dependency-risk-audit/) | Scans `poetry.lock`, `uv.lock`, `Pipfile.lock`, or `requirements.txt` for CVEs, stale pins, and risky upgrades.                                                 |
+
+### Infrastructure
+
+| Skill                                  | What it does                                                                                                                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [docker-doctor](skills/docker-doctor/) | Validates Dockerfiles and Compose manifests for security, reliability, and optimization issues using built-in checks and optional Hadolint. |
+
+### Performance
+
+| Skill                                            | What it does                                                                                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [queryset-optimizer](skills/queryset-optimizer/) | Detects N+1 queries, missing `select_related`/`prefetch_related`, and likely index gaps in Django ORM code. Suggests fixes with expected impact. |
+
+### Workflow
+
+| Skill                                                          | What it does                                                                                                                                               |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [write-conventional-commit](skills/write-conventional-commit/) | Drafts and applies commit messages following the [Conventional Commits 1.0.0](https://www.conventionalcommits.org/) spec. Can execute the commit directly. |
+
+---
+
+## Create a New Skill
+
+Want to add your own skill? Here's how.
+
+### 1. Scaffold it
 
 ```bash
-make create <skill-name>
+make create my-new-skill
 ```
 
-This creates:
+This generates the required file structure:
 
-- `skills/<skill-name>/SKILL.md`
-- `skills/<skill-name>/agents/openai.yaml`
-- `skills/<skill-name>/README.md`
-- Optional support directories: `scripts/`, `references/`, `assets/`
+```
+skills/my-new-skill/
+  SKILL.md              # Workflow instructions (required)
+  agents/openai.yaml    # Agent metadata (required)
+  README.md             # Human-facing docs (recommended)
+```
 
-### Validate local changes
+### 2. Write the skill
+
+**`SKILL.md`** is the core of every skill. It tells the agent exactly what to do. A good SKILL.md includes:
+
+- **Purpose** -- what the skill audits, generates, or optimizes
+- **Workflow steps** -- numbered, concrete steps the agent should follow
+- **Scoring** -- how to measure results (e.g., 0-100 health score)
+- **Output format** -- the expected markdown report structure
+- **Safety gates** -- what the agent should never do without approval
+
+Look at any existing skill for reference (e.g., [`skills/python-doctor/SKILL.md`](skills/python-doctor/SKILL.md)).
+
+**`agents/openai.yaml`** contains the skill's display name and description:
+
+```yaml
+name: my-new-skill
+description: One-line description of what the skill does
+```
+
+### 3. Add supporting files (optional)
+
+| Directory     | Purpose                                          |
+| ------------- | ------------------------------------------------ |
+| `references/` | Rule catalogs, spec documents, antipattern lists |
+| `scripts/`    | Shell scripts the agent can execute              |
+| `assets/`     | Static files, templates, or fixtures             |
+
+### 4. Validate
 
 ```bash
 make lint
-find skills -mindepth 1 -maxdepth 1 -type d -print | sort
-find skills -type f -name '*.md' -size 0
 ```
 
-### Format docs and metadata
+This checks that your skill folder follows naming conventions, has the required files, and has no empty markdown files.
+
+### 5. Submit a PR
 
 ```bash
-make format
+git add skills/my-new-skill/
+git commit -m "feat(my-new-skill): add skill for XYZ"
 ```
 
-## Contribution Guidelines
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full PR guidelines.
 
-1. Add or update skill content under `skills/<skill-name>/`.
-2. Ensure each skill includes required files:
-   - `SKILL.md`
-   - `agents/openai.yaml`
-3. Run local checks (`make lint`) before opening a PR.
-4. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`).
+---
 
-PR descriptions should include purpose/scope, verification commands run, and notable filesystem-impact notes (if any).
-For full contributor workflow and PR expectations, see [CONTRIBUTING.md](CONTRIBUTING.md).
+## Naming Rules
 
-## Code of Conduct
+Skill folder names must be:
 
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+- **Lowercase** and **hyphen-separated**
+- **Action-oriented** -- describe what the skill does
 
-## Security
+Good: `django-doctor`, `dependency-risk-audit`, `write-conventional-commit`
+Bad: `DjangoDoctor`, `django_doctor`, `misc-utils`
 
-Please review our [Security Policy](SECURITY.md) for vulnerability reporting and response expectations.
+---
 
-## CI
+## Repository Layout
 
-The `Skills CI` workflow validates skill structure and repository consistency on pushes and pull requests.
+```
+agent-skills/
+  Makefile                  # create, lint, format commands
+  skills/
+    <skill-name>/
+      SKILL.md              # required -- agent workflow
+      agents/openai.yaml    # required -- agent metadata
+      README.md             # recommended -- human docs
+      scripts/              # optional -- executable scripts
+      references/           # optional -- rule catalogs
+      assets/               # optional -- static files
+```
+
+---
+
+## Available Commands
+
+| Command              | What it does                                            |
+| -------------------- | ------------------------------------------------------- |
+| `make create <name>` | Scaffold a new skill with all required files            |
+| `make lint`          | Validate naming, required files, and non-empty markdown |
+| `make format`        | Format all Markdown and YAML with Prettier              |
+| `make help`          | List all available commands                             |
+
+---
+
+## Contributing
+
+We welcome contributions! You can:
+
+- **Add a new skill** -- follow the steps above
+- **Improve an existing skill** -- fix instructions, add references, expand coverage
+- **Improve repo tooling** -- better linting, new automation, docs
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow. We use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages.
+
+---
+
+## Links
+
+- [Contributing Guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [MIT License](LICENSE)
