@@ -79,6 +79,10 @@ make format
 
 PR descriptions should include purpose/scope, verification commands run, and notable filesystem-impact notes (if any).
 
+## Code of Conduct
+
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## CI
 
 The `Skills CI` workflow validates skill structure and repository consistency on pushes and pull requests.
