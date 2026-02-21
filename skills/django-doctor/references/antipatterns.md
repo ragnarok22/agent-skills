@@ -18,6 +18,7 @@
 - Ignore `tests/` and `migrations/` unless a rule explicitly targets them.
 - Every match starts as a **candidate**. Deduct score only after manual confirmation.
 - Severity points: Critical `10`, High `7`, Medium `5`, Low `3`.
+- For runtime checks (`COR-01`, `COR-08`), reuse `<MANAGE_CMD>` selected in Step 2 of `SKILL.md`.
 
 ---
 
@@ -139,7 +140,7 @@
 ### COR-01: Missing migrations
 
 **Severity**: Critical (10 pts)  
-**Check**: `uv run manage.py makemigrations --check --dry-run || python manage.py makemigrations --check --dry-run`  
+**Check**: `<MANAGE_CMD> makemigrations --check --dry-run`  
 **Confirm**: Command reports model drift.  
 **Fix**: Generate and review migrations.
 
@@ -188,7 +189,7 @@
 ### COR-08: Django system check failures
 
 **Severity**: Varies  
-**Check**: `uv run manage.py check --deploy || python manage.py check --deploy`  
+**Check**: `<MANAGE_CMD> check --deploy`  
 **Confirm**: Any warning/error relevant to target deployment mode.  
 **Fix**: Resolve each warning or explicitly justify accepted risk.
 
