@@ -24,4 +24,3 @@ Optimize Django ORM performance by detecting N+1 patterns, missing eager loading
 - `SKILL.md`: complete audit and scoring workflow.
 - `references/antipatterns.md`: performance rule catalog and search patterns.
 - `agents/openai.yaml`: UI metadata.
-

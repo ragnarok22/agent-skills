@@ -24,4 +24,3 @@ Generate and apply Git commit messages that conform to Conventional Commits 1.0.
 - `SKILL.md`: full workflow and commit execution behavior.
 - `references/conventional-commits-1.0.0.md`: normative specification and examples.
 - `agents/openai.yaml`: UI metadata.
-

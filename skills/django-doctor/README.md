@@ -25,4 +25,3 @@ Audit Django codebases for security, performance, correctness, and architecture 
 - `SKILL.md`: complete workflow, safety gates, scoring, and report format.
 - `references/antipatterns.md`: rule catalog and search/check patterns.
 - `agents/openai.yaml`: UI metadata.
-

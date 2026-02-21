@@ -24,4 +24,3 @@ Audit Python dependencies for security advisories, stale pins, and unsafe upgrad
 
 - `SKILL.md`: complete workflow and scoring rules.
 - `agents/openai.yaml`: UI metadata.
-
