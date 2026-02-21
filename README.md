@@ -23,6 +23,17 @@ Single source of truth for custom Codex and Agent skills — reusable, versioned
 npx skills add ragnarok22/agent-skills --skill django-doctor
 ```
 
+### Django Doctor runtime behavior
+
+The `django-doctor` skill supports multiple project execution styles and safe defaults:
+
+- Uses a selected `<MANAGE_CMD>` command rather than assuming `uv` only.
+- Accepts a user-provided runner first (for example Poetry, uv, plain Python, Pipenv, Docker wrappers).
+- Auto-detects runners when possible (`poetry.lock`/`[tool.poetry]`, then `uv.lock`, then Python fallback).
+- Requires explicit trust/approval before running any runtime Django checks.
+- Falls back to static-only scanning when runtime execution is not approved.
+- Produces sanitized findings and redacts secrets in report output.
+
 ### Create a new skill
 
 ```bash
