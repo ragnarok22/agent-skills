@@ -83,6 +83,10 @@ PR descriptions should include purpose/scope, verification commands run, and not
 
 This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
 
+## Security
+
+Please review our [Security Policy](SECURITY.md) for vulnerability reporting and response expectations.
+
 ## CI
 
 The `Skills CI` workflow validates skill structure and repository consistency on pushes and pull requests.
