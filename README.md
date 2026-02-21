@@ -1,7 +1,7 @@
 # agent-skills
 
 [![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
-![Skills](https://img.shields.io/badge/skills-5-blue)
+![Skills](https://img.shields.io/badge/skills-6-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 
 Source-of-truth repository for local Codex/Agent skills. Skills are reusable, versioned, and validated in CI.
@@ -12,6 +12,7 @@ Source-of-truth repository for local Codex/Agent skills. Skills are reusable, ve
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | [dependency-risk-audit](skills/dependency-risk-audit/)         | Review Python dependencies for security advisories, stale pins, and unsafe upgrade paths                      |
 | [django-doctor](skills/django-doctor/)                         | Audit Django codebases for security, performance, correctness, and architecture antipatterns                  |
+| [docker-doctor](skills/docker-doctor/)                         | Verify Dockerfiles and Compose manifests for security, reliability, optimization, and configuration issues    |
 | [python-doctor](skills/python-doctor/)                         | Audit Python codebases for security, performance, correctness, and architecture antipatterns                  |
 | [queryset-optimizer](skills/queryset-optimizer/)               | Optimize Django ORM performance by detecting N+1 query patterns, missing eager loading, and likely index gaps |
 | [write-conventional-commit](skills/write-conventional-commit/) | Draft and apply commit messages that comply with Conventional Commits 1.0.0                                   |
