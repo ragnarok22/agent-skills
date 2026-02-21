@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability report
+    url: https://github.com/ragnarok22/agent-skills/security/policy
+    about: Please report vulnerabilities privately via SECURITY.md.
+  - name: Contribution guidelines
+    url: https://github.com/ragnarok22/agent-skills/blob/main/CONTRIBUTING.md
+    about: Review contribution and pull request expectations before opening issues.
+
