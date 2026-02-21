@@ -79,6 +79,7 @@ make format
 4. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`).
 
 PR descriptions should include purpose/scope, verification commands run, and notable filesystem-impact notes (if any).
+For full contributor workflow and PR expectations, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Code of Conduct
 
