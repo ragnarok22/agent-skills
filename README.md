@@ -8,12 +8,12 @@ Single source of truth for custom Codex and Agent skills — reusable, versioned
 
 ## Available Skills
 
-| Skill | Description |
-|-------|-------------|
-| [dependency-risk-audit](skills/dependency-risk-audit/) | Review Python dependencies for security advisories, stale pins, and unsafe upgrade paths |
-| [django-doctor](skills/django-doctor/) | Audit Django codebases for security, performance, correctness, and architecture antipatterns |
-| [queryset-optimizer](skills/queryset-optimizer/) | Optimize Django ORM performance by detecting N+1 query patterns, missing eager loading, and likely index gaps |
-| [write-conventional-commit](skills/write-conventional-commit/) | Draft and apply commit messages that comply with Conventional Commits 1.0.0 |
+| Skill                                                          | Description                                                                                                   |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [dependency-risk-audit](skills/dependency-risk-audit/)         | Review Python dependencies for security advisories, stale pins, and unsafe upgrade paths                      |
+| [django-doctor](skills/django-doctor/)                         | Audit Django codebases for security, performance, correctness, and architecture antipatterns                  |
+| [queryset-optimizer](skills/queryset-optimizer/)               | Optimize Django ORM performance by detecting N+1 query patterns, missing eager loading, and likely index gaps |
+| [write-conventional-commit](skills/write-conventional-commit/) | Draft and apply commit messages that comply with Conventional Commits 1.0.0                                   |
 
 ## Quick Start
 
@@ -57,9 +57,9 @@ agent-skills/
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
-| `npx skills add` | Add a skill to this repository |
+| Command                                                 | Purpose                        |
+| ------------------------------------------------------- | ------------------------------ |
+| `npx skills add`                                        | Add a skill to this repository |
 | `npx skills add ragnarok22/agent-skills --skill <name>` | Install a skill from this repo |
 
 ## Contributing

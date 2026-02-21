@@ -25,6 +25,7 @@ Run a repeatable dependency-risk audit for Python projects and return a prioriti
 ### Step 2: Build dependency inventory
 
 Create an inventory with:
+
 - package name
 - installed/resolved version
 - dependency type (`direct` or `transitive`)
@@ -50,6 +51,7 @@ pip-audit -f json
 For non-requirements workflows, export to requirements format first when possible, then audit that export.
 
 For each finding, capture:
+
 - advisory ID (for example `PYSEC-*`, `CVE-*`, `GHSA-*`)
 - package + affected version
 - fixed version range
@@ -59,12 +61,14 @@ For each finding, capture:
 ### Step 4: Detect stale pins
 
 Classify each direct dependency:
+
 - `current`: no newer release in same major
 - `minor/patch stale`: behind within same major
 - `major stale`: newer major available
 - `unknown`: latest data unavailable
 
 Flag stale pins as higher risk when:
+
 - package is internet-facing, auth-related, crypto-related, or framework/core runtime
 - current version is multiple majors behind
 - package has a recent advisory history
@@ -72,17 +76,20 @@ Flag stale pins as higher risk when:
 ### Step 5: Evaluate upgrade-path safety
 
 For each dependency requiring change, assess upgrade risk:
+
 - `low`: patch/minor upgrade, no known breaking changes
 - `medium`: minor upgrade with behavior/config changes
 - `high`: major upgrade, Python-version jump, or resolver conflicts likely
 
 Check these risk signals:
+
 - major-version jump required to reach fixed secure version
 - declared Python requirement of target version conflicts with project runtime
 - conflicting upper bounds across dependencies
 - framework-coupled libraries that typically require code migrations
 
 When possible, propose a stepwise path:
+
 1. patch/minor upgrades first
 2. isolated major upgrades next
 3. framework/runtime upgrades last
@@ -99,35 +106,42 @@ Dependency source: `<lockfile or manifest>`
 Python runtime target: `<version/constraint>`
 
 ### Executive Summary
+
 - Overall risk: [LOW|MEDIUM|HIGH|CRITICAL]
 - Known advisories: X (Critical Y, High Z, ...)
 - Stale direct dependencies: X (Major-stale Y)
 - Unsafe upgrade paths: X
 
 ### Security Advisories
+
 | Package | Version | Advisory | Severity | Fixed In | Notes |
-|---|---|---|---|---|---|
+| ------- | ------- | -------- | -------- | -------- | ----- |
 
 ### Stale Pins
+
 | Package | Current | Latest | Drift Type | Risk Notes |
-|---|---|---|---|---|
+| ------- | ------- | ------ | ---------- | ---------- |
 
 ### Upgrade Path Risks
+
 | Package | Current -> Target | Risk | Why Risky | Recommended Path |
-|---|---|---|---|---|
+| ------- | ----------------- | ---- | --------- | ---------------- |
 
 ### Prioritized Remediation Plan
+
 1. ...
 2. ...
 3. ...
 
 ### Not Evaluated
+
 - Item + reason
 ```
 
 ## Scoring Guidance (optional)
 
 If the user asks for a numeric score, start at `100` and deduct:
+
 - Critical advisory: `-15`
 - High advisory: `-10`
 - Medium advisory: `-6`
@@ -140,6 +154,7 @@ Floor at `0`. Cap repeated deductions for the same package/advisory pair.
 ## Remediation Loop
 
 If the user asks for fixes:
+
 1. Address critical/high advisories first, prioritizing low-risk upgrades.
 2. Re-run audit steps 2-6.
 3. Report risk delta, unresolved blockers, and required code changes/tests.

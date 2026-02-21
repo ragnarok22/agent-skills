@@ -66,7 +66,7 @@ For each rule:
 Start from 100 and deduct points per confirmed finding:
 
 | Severity | Deduction |
-|----------|-----------|
+| -------- | --------- |
 | High     | -8        |
 | Medium   | -5        |
 | Low      | -2        |
