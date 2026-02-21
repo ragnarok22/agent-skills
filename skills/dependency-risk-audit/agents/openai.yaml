@@ -1,3 +1,4 @@
 interface:
   display_name: "Dependency Risk Audit"
-  short_description: "Help with Dependency Risk Audit tasks"
+  short_description: "Audit Python deps for security and upgrade risk"
+  default_prompt: "Use $dependency-risk-audit to review this Python project for dependency advisories, stale pins, and unsafe upgrade paths."
