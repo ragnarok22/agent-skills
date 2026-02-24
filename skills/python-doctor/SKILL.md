@@ -9,6 +9,79 @@ Run a deterministic Python audit across four categories: **Security**, **Perform
 
 Primary output is a scored report with sanitized evidence summaries and prioritized remediation actions.
 
+## How to use
+
+Read individual rule files for detailed explanations and search patterns.
+
+### Conventions
+
+- [rules/audit-conventions.md](rules/audit-conventions.md) - Audit conventions and shared defaults
+
+### Security (13 rules)
+
+- [rules/security.md](rules/security.md) - SEC-01 through SEC-13
+  - SEC-01: Hardcoded credentials in source
+  - SEC-02: Shell execution with injection risk
+  - SEC-03: Unsafe deserialization
+  - SEC-04: Dynamic code execution
+  - SEC-05: TLS verification disabled
+  - SEC-06: Insecure temporary file creation
+  - SEC-07: Weak randomness in security context
+  - SEC-08: SQL injection via string formatting
+  - SEC-09: Binding to all interfaces in production
+  - SEC-10: Path traversal via unsanitized file paths
+  - SEC-11: Weak or deprecated hash algorithms for security
+  - SEC-12: Logging sensitive data
+  - SEC-13: XML External Entity (XXE) processing
+
+### Performance (10 rules)
+
+- [rules/performance.md](rules/performance.md) - PERF-01 through PERF-10
+  - PERF-01: Blocking work inside async functions
+  - PERF-02: Missing timeout on HTTP requests
+  - PERF-03: Repeated expensive calls inside loops
+  - PERF-04: Full-file reads where streaming is safer
+  - PERF-05: Eager list creation in aggregations
+  - PERF-06: Regex compilation in hot loops
+  - PERF-07: String concatenation in loops
+  - PERF-08: Missing HTTP session reuse
+  - PERF-09: Quadratic list membership checks
+  - PERF-10: Unnecessary data copying
+
+### Correctness (14 rules)
+
+- [rules/correctness.md](rules/correctness.md) - COR-01 through COR-14
+  - COR-01: Mutable default arguments
+  - COR-02: Bare `except`
+  - COR-03: Overly broad `except Exception` with weak handling
+  - COR-04: Naive datetime usage
+  - COR-05: `assert` used for runtime validation
+  - COR-06: Comparing to `None` with equality operators
+  - COR-07: Mutable class attributes as shared state
+  - COR-08: Python syntax check failures
+  - COR-09: Test suite failures
+  - COR-10: Missing `super().__init__()` calls
+  - COR-11: `is` used for value comparison
+  - COR-12: Unreachable code after return/raise/break
+  - COR-13: f-string without interpolation
+  - COR-14: Shadowing built-in names
+
+### Architecture (12 rules)
+
+- [rules/architecture.md](rules/architecture.md) - ARCH-01 through ARCH-12
+  - ARCH-01: Wildcard imports
+  - ARCH-02: Deep relative imports
+  - ARCH-03: Import-time side effects
+  - ARCH-04: Oversized modules
+  - ARCH-05: Global mutable state
+  - ARCH-06: Logging and error policy inconsistency
+  - ARCH-07: Circular imports between modules
+  - ARCH-08: Mixed sync and async patterns
+  - ARCH-09: Dependency version not pinned
+  - ARCH-10: God classes
+  - ARCH-11: Missing `__init__.py` for packages
+  - ARCH-12: Unused imports
+
 ## Workflow
 
 ### Step 1: Identify audit scope
@@ -60,7 +133,7 @@ If runtime checks are skipped due to trust or approval, mark each as `SKIPPED (u
 
 ### Step 3: Static scan
 
-Read [references/antipatterns.md](references/antipatterns.md) for rule IDs, severity, search patterns, and fixes.
+Read the rule files under [rules/](rules/) for rule IDs, severity, search patterns, and fixes. Start with [rules/audit-conventions.md](rules/audit-conventions.md) for shared defaults.
 
 For every rule:
 
@@ -117,6 +190,7 @@ Output a markdown report with this structure:
 ## Python Doctor Report
 
 **Health Score: XX / 100** [GRADE]
+
 Grade thresholds: A (90-100), B (80-89), C (70-79), D (60-69), F (<60)
 Audit root: `<path>`
 Execution command: `<PY_CMD>` (or `SKIPPED`)
@@ -147,6 +221,7 @@ Execution command: `<PY_CMD>` (or `SKIPPED`)
 - [RULE_ID] Reason rule could not be evaluated.
 
 ### Summary
+- Rules evaluated: X / Y
 - Security: X issues (Y critical)
 - Performance: X issues
 - Correctness: X issues
