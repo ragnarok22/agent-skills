@@ -5,8 +5,19 @@ Audit Django codebases for security, performance, correctness, and architecture 
 ## Use Cases
 
 - Pre-deploy backend health checks
-- Django security and correctness audits
+- Django security and correctness audits (XSS, CSRF, SQL injection, file uploads, mass assignment)
+- Transaction safety and migration drift detection
+- Deprecated API and upgrade-readiness checks
 - Prioritized remediation planning for Django services
+
+## Rule Coverage
+
+53 rules across four categories:
+
+- **Security (14)**: SECRET_KEY, DEBUG, SQL injection, CSRF, CORS, secrets, security middleware, XSS, file uploads, rate limiting, mass assignment
+- **Performance (11)**: N+1 queries, unbounded endpoints, missing indexes, caching, bulk operations, signal overhead, queryset evaluation
+- **Correctness (14)**: Migration drift, constraints, cascades, timezone, exceptions, transactions, DoesNotExist, deprecated APIs, settings split, signal signatures
+- **Architecture (14)**: Fat views, serializer logic, cross-app coupling, schema annotations, base models, tenant scoping, admin registration, error envelopes, circular imports, URL namespacing, signals as business logic, AppConfig, god models, custom managers
 
 ## Safety Model
 
