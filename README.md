@@ -1,7 +1,7 @@
 # agent-skills
 
 [![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
-![Skills](https://img.shields.io/badge/skills-6-blue)
+![Skills](https://img.shields.io/badge/skills-7-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -54,6 +54,7 @@ That's it. The skill is now available in your agent.
 | Skill                                                          | What it does                                                                                                                                               |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [write-conventional-commit](skills/write-conventional-commit/) | Drafts and applies commit messages following the [Conventional Commits 1.0.0](https://www.conventionalcommits.org/) spec. Can execute the commit directly. |
+| [create-release](skills/create-release/)                       | Bumps versions across project files, updates changelogs, creates git tags, and optionally publishes GitHub releases via `gh` CLI.                          |
 
 ---
 

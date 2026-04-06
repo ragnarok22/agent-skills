@@ -183,7 +183,7 @@ Update the version string in every file identified in Step 1. Apply file-type-sp
 - **pyproject.toml**: Update `version = "X.Y.Z"` under `[project]` or `[tool.poetry]`.
 - **setup.cfg**: Update `version = X.Y.Z` under `[metadata]`.
 - **setup.py**: Update the `version="X.Y.Z"` argument.
-- ****version**.py / \_version.py / version.py**: Update `__version__ = "X.Y.Z"` or `VERSION = "X.Y.Z"`.
+- \***\*version**.py / \_version.py / version.py\*\*: Update `__version__ = "X.Y.Z"` or `VERSION = "X.Y.Z"`.
 - **Cargo.toml**: Update `version = "X.Y.Z"` under `[package]`.
 - **build.gradle / build.gradle.kts**: Update `version = "X.Y.Z"` or `version "X.Y.Z"`.
 - **pom.xml**: Update `<version>X.Y.Z</version>` under the root `<project>` element (not dependency versions).
