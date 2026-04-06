@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Release"
+  short_description: "Bump versions, update changelogs, tag, and publish releases"
+  default_prompt: "Use $create-release to prepare a new semantic version release for this project."
