@@ -1,7 +1,7 @@
 # agent-skills
 
 [![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
-![Skills](https://img.shields.io/badge/skills-7-blue)
+![Skills](https://img.shields.io/badge/skills-8-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -48,6 +48,12 @@ That's it. The skill is now available in your agent.
 | Skill                                            | What it does                                                                                                                                     |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [queryset-optimizer](skills/queryset-optimizer/) | Detects N+1 queries, missing `select_related`/`prefetch_related`, and likely index gaps in Django ORM code. Suggests fixes with expected impact. |
+
+### Product & Design
+
+| Skill                                        | What it does                                                                                                                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [create-design-md](skills/create-design-md/) | Creates an English-only `DESIGN.md` that turns brand strategy and project context into implementation-ready design direction for UI and landing pages. |
 
 ### Workflow
 

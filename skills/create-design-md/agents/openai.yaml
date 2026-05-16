@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create DESIGN.md"
+  short_description: "Create practical design guides from brand and project context"
+  default_prompt: "Use $create-design-md to create a DESIGN.md guide for this project."
