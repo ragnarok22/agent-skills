@@ -1,7 +1,7 @@
 # agent-skills
 
 [![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
-![Skills](https://img.shields.io/badge/skills-8-blue)
+![Skills](https://img.shields.io/badge/skills-9-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -51,9 +51,10 @@ That's it. The skill is now available in your agent.
 
 ### Product & Design
 
-| Skill                                        | What it does                                                                                                                                           |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [create-design-md](skills/create-design-md/) | Creates an English-only `DESIGN.md` that turns brand strategy and project context into implementation-ready design direction for UI and landing pages. |
+| Skill                                                        | What it does                                                                                                                                           |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [branding-guide-generator](skills/branding-guide-generator/) | Creates or updates `BRANDING.md` with emotional identity, visual direction, color rules, shape language, voice, and UI guidance.                       |
+| [create-design-md](skills/create-design-md/)                 | Creates an English-only `DESIGN.md` that turns brand strategy and project context into implementation-ready design direction for UI and landing pages. |
 
 ### Workflow
 

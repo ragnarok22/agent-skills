@@ -1,0 +1,4 @@
+interface:
+  display_name: "Branding Guide Generator"
+  short_description: "Create BRANDING.md for emotional and visual product identity"
+  default_prompt: "Use $branding-guide-generator to create a BRANDING.md guide for this project."
