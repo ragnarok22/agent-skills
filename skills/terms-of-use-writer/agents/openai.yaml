@@ -1,0 +1,4 @@
+interface:
+  display_name: "Terms Of Use Writer"
+  short_description: "Draft Terms of Use from product code and docs"
+  default_prompt: "Use $terms-of-use-writer to inspect this project and draft Terms of Use based on its current functionality."
