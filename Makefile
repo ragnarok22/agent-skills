@@ -9,7 +9,7 @@ ifneq ($(filter create,$(MAKECMDGOALS)),)
   $(foreach goal,$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS)),$(eval $(goal):;@true))
 endif
 
-.PHONY: help create format lint
+.PHONY: help create format lint test
 
 help: ## Show available targets and usage
 	@echo "Usage:"
@@ -18,6 +18,7 @@ help: ## Show available targets and usage
 	@echo "  make create SKILL=<skill-name>"
 	@echo "  make format"
 	@echo "  make lint"
+	@echo "  make test"
 	@echo ""
 	@echo "Targets:"
 	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_.-]+:.*## / {printf "  %-12s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -40,7 +41,7 @@ create: ## Create a new skill scaffold under skills/<skill-name>
 	fi; \
 	mkdir -p "$$skill_dir/agents" "$$skill_dir/scripts" "$$skill_dir/references" "$$skill_dir/assets"; \
 	printf "# %s\n\nDescribe what this skill does and when to use it.\n" "$(CREATE_SKILL_NAME)" > "$$skill_dir/SKILL.md"; \
-	printf "# %s\n\n## Purpose\n\nShort description of this skill.\n\n## Structure\n\n- `SKILL.md`\n- `agents/openai.yaml`\n- `scripts/` (optional)\n- `references/` (optional)\n- `assets/` (optional)\n" "$(CREATE_SKILL_NAME)" > "$$skill_dir/README.md"; \
+	printf '# %s\n\n## Purpose\n\nShort description of this skill.\n\n## Structure\n\n- `SKILL.md`\n- `agents/openai.yaml`\n- `scripts/` (optional)\n- `references/` (optional)\n- `assets/` (optional)\n' "$(CREATE_SKILL_NAME)" > "$$skill_dir/README.md"; \
 	printf "name: %s\ndescription: Describe this skill.\n" "$(CREATE_SKILL_NAME)" > "$$skill_dir/agents/openai.yaml"; \
 	echo "Created $$skill_dir"
 
@@ -77,3 +78,6 @@ lint: ## Validate skill naming and required files
 		exit 1; \
 	fi
 	@echo "Lint passed."
+
+test: ## Run repository regression tests
+	@bash scripts/test_make_create.sh
