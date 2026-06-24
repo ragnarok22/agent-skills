@@ -1,0 +1,4 @@
+interface:
+  display_name: "Privacy Policy Writer"
+  short_description: "Draft privacy policies from code, packages, and data practices"
+  default_prompt: "Use $privacy-policy-writer to inspect this project and draft PRIVACY.md based on its packages, code, and data collection practices."
