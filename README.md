@@ -1,7 +1,7 @@
 # agent-skills
 
 [![Skills CI](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/ragnarok22/agent-skills/actions/workflows/skills-ci.yml)
-![Skills](https://img.shields.io/badge/skills-10-blue)
+![Skills](https://img.shields.io/badge/skills-11-blue)
 ![Platform](https://img.shields.io/badge/platform-Codex%20%7C%20Claude%20Code-blueviolet)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -58,9 +58,10 @@ That's it. The skill is now available in your agent.
 
 ### Business & Legal
 
-| Skill                                              | What it does                                                                                                                                      |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [terms-of-use-writer](skills/terms-of-use-writer/) | Drafts Terms of Use from product code, docs, billing, auth, user-content features, and user business rules. Can also create an in-app Terms page. |
+| Skill                                                  | What it does                                                                                                                                      |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [privacy-policy-writer](skills/privacy-policy-writer/) | Drafts privacy policies from packages, code, data collection practices, third-party sharing, retention, and deletion/export processes.            |
+| [terms-of-use-writer](skills/terms-of-use-writer/)     | Drafts Terms of Use from product code, docs, billing, auth, user-content features, and user business rules. Can also create an in-app Terms page. |
 
 ### Workflow
 
@@ -172,6 +173,7 @@ agent-skills/
 | `make create <name>` | Scaffold a new skill with all required files            |
 | `make lint`          | Validate naming, required files, and non-empty markdown |
 | `make format`        | Format all Markdown and YAML with Prettier              |
+| `make test`          | Run repository regression tests                         |
 | `make help`          | List all available commands                             |
 
 ---
